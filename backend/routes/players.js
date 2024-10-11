@@ -22,6 +22,35 @@ router.get("/:id", async (req, res) => {
   res.status(200).json(player);
 });
 
+// POST a new player
+router.post("/", async (req, res) => {
+  const { name, number, position } = req.body;
+
+  // Validate that all required fields are present
+  if (!name || !number || !position) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    // Create a new player document using the Player model
+    const player = new Player({
+      name,
+      number,
+      position
+    });
+
+    // Save the player to the database
+    await player.save();
+
+    // Return the created player data as a response
+    res.status(201).json(player);
+  } catch (error) {
+    // Handle potential errors
+    res.status(500).json({ error: "Could not create player." });
+  }
+});
+
+
 // PATCH a single player's information
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
